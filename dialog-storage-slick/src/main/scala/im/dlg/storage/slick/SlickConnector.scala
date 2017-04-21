@@ -9,10 +9,12 @@ import org.slf4j.LoggerFactory
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext, Future}
 
-private object Driver extends ExPostgresDriver
-import Driver.api._
+private object Profile extends ExPostgresProfile {
+  override val api = new API with ByteaPlainImplicits
+}
+import Profile.api._
 
-class SlickConnector(db: Database)(implicit ec: ExecutionContext) extends Connector {
+final class SlickConnector(db: Database)(implicit ec: ExecutionContext) extends Connector {
   private val log = LoggerFactory.getLogger(this.getClass)
 
   override def run[R](action: Action[R]): Future[R] = for {
